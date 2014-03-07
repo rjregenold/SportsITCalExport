@@ -11,31 +11,27 @@ module Parsers =
   open System.Xml
 
 
+  let optParse (f:'a -> 'b) ((success, value):bool * 'a) : 'b option =
+    if success
+    then Some(f value)
+    else None
+
   let private parseGameMonthDay (text:string) =
     let ps = text.Split(' ')
     match List.ofSeq ps with
     | _ :: monthAbbr :: dayWithOrdinal :: _ -> 
       let dayStr = dayWithOrdinal.Remove(dayWithOrdinal.Length - 2)
-      let couldParse, parsedDay = System.Int16.TryParse(dayStr)
-      if couldParse 
-      then Some({ monthAbbr = monthAbbr; day = parsedDay })
-      else None
+      Int16.TryParse(dayStr) |> optParse (fun day -> { monthAbbr = monthAbbr; day = day})
     | _ -> None
 
   let private parseTime (time:string) (gameMonthDate:GameMonthDay) =
     let dateStr = sprintf "%s %i %i %s" gameMonthDate.monthAbbr gameMonthDate.day DateTime.Now.Year time
     let formats = ["MMM d yyyy h:mmtt"]
-    let couldParse, parsedDate = DateTime.TryParseExact(dateStr, formats.ToArray(), null, Globalization.DateTimeStyles.None)
-    if couldParse
-    then Some(parsedDate)
-    else None
+    DateTime.TryParseExact(dateStr, formats.ToArray(), null, Globalization.DateTimeStyles.None) |> optParse id
 
   let private parseDuration (duration:string) =
     let duration' = duration.Remove(0, "Game".Length) |> (fun x -> x.Remove(x.Length - 1))
-    let couldParse, parsedDuration = System.Int16.TryParse(duration')
-    if couldParse
-    then Some(parsedDuration)
-    else None
+    Int16.TryParse(duration') |> optParse id
 
   let private parseDescription (description:String) =
     Regex.Replace(description, @"\s+", " ")

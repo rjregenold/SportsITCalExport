@@ -3,7 +3,9 @@
 [<AutoOpen>]
 module Common =
 
-  let flip (f: 'a -> 'b -> 'c) (b:'b) =
+  let id (x:'a) : 'a = x
+
+  let flip (f:'a -> 'b -> 'c) (b:'b) =
     fun (x:'a) -> f x b
 
   let fmap (f:'a -> 'b) (fa:'a option) : 'b option =

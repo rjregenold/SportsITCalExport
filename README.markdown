@@ -3,7 +3,7 @@
 ## Usage
 
 1. Clone the project locally and open it in VS.
-2. Update the `config` record in `Main.fs`. You can those values by logging into your sports-it.com account.
+2. Update the `config` record in `Main.fs`. You can find those values by logging into your sports-it.com account.
 3. Run the project.
 
 ## TODO
